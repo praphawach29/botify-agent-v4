@@ -1,0 +1,22 @@
+# ═══════════════════════════════════════════════════════════
+#  BOTIFY AI — Docker Compose (local development / VPS)
+# ═══════════════════════════════════════════════════════════
+version: "3.8"
+
+services:
+  botify:
+    build: .
+    container_name: botify-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

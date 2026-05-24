@@ -1,0 +1,30 @@
+{
+  "name": "botify-ai",
+  "version": "2.0.0",
+  "description": "BOTIFY AI — LINE/Facebook Chatbot SaaS with Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
+    "@google/genai": "^2.6.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.1.5",
+    "googleapis": "^126.0.0",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "nodemailer": "^6.9.7",
+    "openai": "^6.39.0",
+    "validator": "^13.11.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
