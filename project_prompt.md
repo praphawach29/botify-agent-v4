@@ -38,4 +38,9 @@
 > 1. เชื่อมต่อหน้า Dashboard ฝั่ง Frontend ให้สามารถส่งตั้งค่า Bot Config ไปบันทึกที่ Backend ได้
 > 2. ทำระบบดึงสินค้าจาก Google Sheets ไปโชว์ในหน้า Products ของ Dashboard
 > 
+> ### Phase 6: ยกระดับความปลอดภัยและความเสถียร (Security, Redis, AI Fallback)
+> 1. บังคับใช้ `req.auth.shopId` จาก JWT ใน API Routes ทุกตัวเพื่อป้องกัน Cross-Tenant Data Leak
+> 2. เปลี่ยนจากการเก็บ State ไว้ในหน่วยความจำ (Local Variables) ไปใช้ **Redis (`ioredis`)** พร้อมระบบ Fallback
+> 3. สร้างระบบ **AI Fallback Chain** (`claude` -> `openai` -> `gemini`) ป้องกันบอทล่มเวลา API ค่ายใดค่ายหนึ่งมีปัญหา
+> 
 > เข้าใจตรงกันแล้ว ให้พิมพ์ว่า 'พร้อมเริ่มต้น Phase 1' และเริ่มเขียนโค้ดของ Phase 1 ได้เลย!"

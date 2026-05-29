@@ -2640,6 +2640,9 @@ function ShopManagementPage({ toast }) {
               <textarea value={detailForm.system_prompt} onChange={e => setDetailForm(f => ({ ...f, system_prompt: e.target.value }))}
                 placeholder="คำสั่งของ AI เช่น เป็นพนักงานขายของร้าน..."
                 rows={6} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-indigo-500 resize-none" />
+                { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash", desc: "สมดุลระหว่างความเร็วและคุณภาพ", badge: null },
+      { value: "gemini-3.5-flash", label: "Gemini 3.5 Flash", desc: "โมเดลใหม่ล่าสุด เร็วมาก", badge: "ใหม่ล่าสุด" },
+    ]
             </div>
           </div>
         </Modal>

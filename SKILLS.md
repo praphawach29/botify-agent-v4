@@ -75,7 +75,7 @@ DEEPSEEK_KEY=...
 # Optional: override default models
 CLAUDE_MODEL=claude-3-5-sonnet-latest
 OPENAI_MODEL=gpt-4o
-GEMINI_MODEL=gemini-3-flash-preview
+GEMINI_MODEL=gemini-3.5-flash
 TYPHOON_MODEL=typhoon-v2-70b-instruct
 DEEPSEEK_MODEL=deepseek-chat
 ```

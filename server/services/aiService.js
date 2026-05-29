@@ -45,7 +45,7 @@ const AI_CONFIGS = {
   },
   gemini: {
     url:   "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-    model: process.env.GEMINI_MODEL || "gemini-3-flash-preview",
+    model: process.env.GEMINI_MODEL || "gemini-3.5-flash",
     key:   process.env.GEMINI_KEY,
     type:  "openai", // Gemini ใช้ OpenAI-compatible format
   },
