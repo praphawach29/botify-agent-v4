@@ -49,7 +49,7 @@ app.post("/api/auth/login", async (req, res) => {
     // ดึง profile
     const { data: profile } = await supabase
       .from("users")
-      .select("role, workspace_id, name, workspaces(name, business_type)")
+      .select("role, workspace_id, name, shops(name, business_type)")
       .eq("id", data.user.id)
       .single();
 
@@ -60,8 +60,8 @@ app.post("/api/auth/login", async (req, res) => {
       expires_at: data.session.expires_at,
       role: profile?.role || "admin",
       shopId: profile?.workspace_id || null,
-      shopName: profile?.workspaces?.name || null,
-      bizType: profile?.workspaces?.business_type || "retail",
+      shopName: profile?.shops?.name || null,
+      bizType: profile?.shops?.business_type || "retail",
       displayName: profile?.name || email,
       userId: data.user.id,
       avatarUrl: data.user?.user_metadata?.avatar_url || null,

@@ -1967,7 +1967,7 @@ app.post("/refresh-token", authMW, async (req, res) => {
 app.get("/doc/:id", async (req, res) => {
   try {
     if (!supabase) return res.send("Database not configured");
-    const { data: doc, error } = await supabase.from("documents").select("*, workspaces(name)").eq("id", req.params.id).single();
+    const { data: doc, error } = await supabase.from("documents").select("*, shops(name)").eq("id", req.params.id).single();
     if (error || !doc) return res.status(404).send("Document Not Found");
     
     // Minimal beautiful HTML output

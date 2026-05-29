@@ -139,7 +139,7 @@ app.post("/api/auth/refresh", async (req, res) => {
     // ดึง profile เพื่อ return role/shopId ล่าสุด
     const { data: profile } = await supabase
       .from("users")
-      .select("role, workspace_id, name, workspaces(name, business_type)")
+      .select("role, workspace_id, name, shops(name, business_type)")
       .eq("id", data.user.id)
       .single();
 
@@ -150,8 +150,8 @@ app.post("/api/auth/refresh", async (req, res) => {
       expires_at: data.session.expires_at,
       role: profile?.role || "admin",
       shopId: profile?.workspace_id || null,
-      shopName: profile?.workspaces?.name || null,
-      bizType: profile?.workspaces?.business_type || "retail",
+      shopName: profile?.shops?.name || null,
+      bizType: profile?.shops?.business_type || "retail",
       displayName: profile?.name || data.user.email,
       avatarUrl: data.user?.user_metadata?.avatar_url || null,
     });
@@ -230,7 +230,7 @@ app.get("/api/auth/users", authMW, async (req, res) => {
   try {
     if (req.auth.role !== "superadmin") return res.status(403).json({ error: "ต้องเป็น Super Admin" });
     if (!supabase) return res.status(500).json({ success: false, error: "Supabase not configured" });
-    const { data: profiles } = await supabase.from("profiles").select("*, shops(name)");
+    const { data: profiles } = await supabase.from("users").select("id, name, email, role, workspace_id, created_at, shops(name)");
     res.json({ success: true, users: profiles || [] });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

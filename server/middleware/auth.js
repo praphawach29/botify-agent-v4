@@ -18,18 +18,19 @@ const authMW = async (req, res, next) => {
       if (error || !user) return res.status(401).json({ error: "Token ไม่ถูกต้องหรือหมดอายุ" });
 
       // ดึง profile จาก users table
-      const { data: profile } = await supabase
+      const { data: profile, error: profileErr } = await supabase
         .from("users")
-        .select("role, workspace_id, name, workspaces(name)")
+        .select("role, workspace_id, name, shops(name)")
         .eq("id", user.id)
         .single();
+      if (profileErr) console.warn("⚠️ [authMW] profile query error:", profileErr.message);
 
       req.auth = {
         userId: user.id,
         email: user.email,
         role: profile?.role || "owner",
         shopId: profile?.workspace_id || null,
-        shopName: profile?.workspaces?.name || null,
+        shopName: profile?.shops?.name || null,
         displayName: profile?.name || user.email,
         mode: "supabase",
       };
