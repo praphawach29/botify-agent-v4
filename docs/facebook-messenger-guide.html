@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คู่มือการตั้งค่า Facebook Messenger API - Botify</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+      background: #f0f4ff;
+      color: #1a1a2e;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 48px 56px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 3px solid #1877F2;
+      margin-bottom: 32px;
+    }
+
+    .logo-box {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #1877F2 0%, #0a3d91 100%);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(24,119,242,0.35);
+    }
+
+    .header-text h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1877F2;
+      line-height: 1.3;
+    }
+
+    .header-text p {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 3px;
+    }
+
+    .badge {
+      margin-left: auto;
+      background: #e8f0fe;
+      color: #1877F2;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid #c2d4f8;
+      white-space: nowrap;
+    }
+
+    /* Intro box */
+    .intro-box {
+      background: linear-gradient(135deg, #e8f0fe 0%, #dce8ff 100%);
+      border-left: 4px solid #1877F2;
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      font-size: 13.5px;
+      color: #1a1a2e;
+    }
+
+    .intro-box strong {
+      color: #1877F2;
+    }
+
+    /* Steps sections */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-number {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #1877F2 0%, #0a3d91 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 3px 8px rgba(24,119,242,0.3);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 0 46px;
+    }
+
+    .step-list li {
+      position: relative;
+      padding: 8px 0 8px 28px;
+      border-bottom: 1px solid #f0f4ff;
+      font-size: 13.5px;
+      color: #374151;
+    }
+
+    .step-list li:last-child {
+      border-bottom: none;
+    }
+
+    .step-list li::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 20px;
+      height: 20px;
+      background: #e8f0fe;
+      color: #1877F2;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    .step-list li b, .step-list li strong {
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+
+    code {
+      background: #f0f4ff;
+      color: #1877F2;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid #c2d4f8;
+    }
+
+    /* Warning / Tip boxes */
+    .warning-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fff8e1;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0 10px 46px;
+      font-size: 13px;
+      color: #7c5700;
+    }
+
+    .warning-box .icon { font-size: 16px; flex-shrink: 0; }
+
+    .tip-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #e8f5e9;
+      border: 1px solid #4caf50;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0 10px 46px;
+      font-size: 13px;
+      color: #1b5e20;
+    }
+
+    .tip-box .icon { font-size: 16px; flex-shrink: 0; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, #1877F2, transparent);
+      margin: 24px 0;
+      opacity: 0.25;
+    }
+
+    /* Token display example */
+    .token-example {
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 10px 0 10px 46px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #90caf9;
+      word-break: break-all;
+      border-left: 3px solid #1877F2;
+    }
+
+    .token-example .label {
+      color: #64b5f6;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      font-family: 'Sarabun', sans-serif;
+    }
+
+    .token-value {
+      color: #a5d6a7;
+    }
+
+    .page-id-value {
+      color: #ffcc80;
+    }
+
+    /* Summary table */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 14px 0;
+      font-size: 13px;
+    }
+
+    .summary-table thead tr {
+      background: #1877F2;
+      color: white;
+    }
+
+    .summary-table thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .summary-table tbody tr:nth-child(even) {
+      background: #f0f4ff;
+    }
+
+    .summary-table tbody tr:nth-child(odd) {
+      background: #fff;
+    }
+
+    .summary-table tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #e0e8ff;
+      vertical-align: top;
+    }
+
+    .summary-table tbody td:first-child {
+      font-weight: 600;
+      color: #1877F2;
+      white-space: nowrap;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 2px solid #e8f0fe;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1877F2;
+    }
+
+    .footer-logo span {
+      color: #1a1a2e;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* Final success box */
+    .success-box {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      border: 1px solid #4caf50;
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .success-box .check {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .success-box h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1b5e20;
+    }
+
+    .success-box p {
+      font-size: 12.5px;
+      color: #2e7d32;
+      margin-top: 4px;
+    }
+
+    /* Page break for print */
+    @media print {
+      body { background: white; }
+      .page { padding: 32px 40px; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-box">📘</div>
+    <div class="header-text">
+      <h1>คู่มือการตั้งค่า Facebook Messenger API</h1>
+      <p>วิธีสร้าง Page Access Token &amp; Page ID สำหรับเชื่อมต่อกับ Botify</p>
+    </div>
+    <div class="badge">Botify Docs v1.0</div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro-box">
+    คู่มือนี้จะอธิบายขั้นตอนการสร้าง <strong>Page Access Token</strong> และการหา <strong>Page ID</strong> จาก Meta for Developers เพื่อนำไปกรอกในระบบ Botify สำหรับเชื่อมต่อบอทเข้ากับเพจ Facebook ของคุณ
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">สร้างแอปใน Meta for Developers</div>
+    </div>
+    <ul class="step-list">
+      <li data-step="1">เปิดเบราว์เซอร์แล้วไปที่ <strong>developers.facebook.com</strong> จากนั้นล็อกอินด้วยบัญชี Facebook ของคุณ</li>
+      <li data-step="2">คลิกที่เมนู <strong>"My Apps"</strong> (แอปของฉัน) ที่มุมขวาบนของหน้าเว็บ</li>
+      <li data-step="3">คลิกปุ่ม <strong>"Create App"</strong> (สร้างแอป) สีฟ้าด้านขวาบน</li>
+      <li data-step="4">เมื่อมีป๊อปอัปถามประเภทแอป ให้เลือก <strong>"Other"</strong> → <strong>"Business"</strong> แล้วกด Next</li>
+      <li data-step="5">กรอก <strong>App Name</strong> ตั้งชื่อให้จดจำได้ง่าย เช่น <code>Botify MyShop</code> และกรอกอีเมลสำหรับติดต่อ</li>
+      <li data-step="6">คลิก <strong>"Create App"</strong> และยืนยันด้วยรหัสผ่าน Facebook หากมีป๊อปอัปถาม</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">เพิ่ม Messenger API เข้าไปในแอป</div>
+    </div>
+    <ul class="step-list">
+      <li data-step="1">หลังสร้างแอปสำเร็จ ระบบจะพาไปที่หน้า <strong>App Dashboard</strong> โดยอัตโนมัติ</li>
+      <li data-step="2">เลื่อนหน้าลงมาจนเจอการ์ดที่ชื่อว่า <strong>"Messenger"</strong></li>
+      <li data-step="3">คลิกปุ่ม <strong>"Set Up"</strong> (ตั้งค่า) ในการ์ด Messenger</li>
+      <li data-step="4">ระบบจะพาคุณไปที่หน้า <strong>Messenger API Settings</strong> โดยอัตโนมัติ</li>
+    </ul>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">สร้าง Page Access Token และหา Page ID</div>
+    </div>
+    <ul class="step-list">
+      <li data-step="1">ในหน้า Messenger Settings ให้เลื่อนลงมาที่หัวข้อ <strong>"Access Tokens"</strong></li>
+      <li data-step="2">คลิกปุ่ม <strong>"Add or Remove Pages"</strong></li>
+      <li data-step="3">ป๊อปอัป Facebook จะเด้งขึ้นมา ให้เลือกเพจที่ต้องการเชื่อมต่อกับบอท แล้วกดยืนยันและอนุมัติสิทธิ์ทั้งหมด</li>
+      <li data-step="4">เมื่อผูกเพจสำเร็จ ชื่อเพจของคุณจะปรากฏในตาราง พร้อมกับ <strong>Page ID</strong> ที่อยู่ใต้ชื่อเพจ — <strong>คัดลอกตัวเลขนี้ไว้</strong></li>
+      <li data-step="5">คลิกปุ่ม <strong>"Generate Token"</strong> ที่อยู่ในแถวของเพจนั้น</li>
+      <li data-step="6">ป๊อปอัปจะแสดง Token ยาวๆ ออกมา ให้กดยืนยันแล้ว <strong>คัดลอกทันที</strong> ก่อนกดปิด</li>
+    </ul>
+
+    <div class="warning-box">
+      <span class="icon">⚠️</span>
+      <div><strong>สำคัญมาก!</strong> Page Access Token จะแสดงให้เห็นเพียงครั้งเดียวเท่านั้น หากปิดป๊อปอัปโดยไม่คัดลอก จะต้องกด Generate Token ใหม่อีกครั้ง</div>
+    </div>
+
+    <div class="token-example">
+      <div class="label">ตัวอย่าง Page Access Token</div>
+      <div class="token-value">EAABsbCS1iHgBAKZCGZBMr5j7nJ3rT8YuQpL2vX9wWdHmNkEzPqR0sF4xOcA1bV6yIt7GhCeD...</div>
+    </div>
+
+    <div class="token-example">
+      <div class="label">ตัวอย่าง Page ID</div>
+      <div class="page-id-value">123456789012345</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title">กรอกข้อมูลในระบบ Botify</div>
+    </div>
+    <ul class="step-list">
+      <li data-step="1">เปิดระบบ Botify แล้วไปที่เมนู <strong>"ช่องทางเชื่อมต่อ" (Channels)</strong></li>
+      <li data-step="2">คลิกที่แท็บ <strong>"Facebook Messenger"</strong></li>
+      <li data-step="3">วาง <strong>Page Access Token</strong> ที่คัดลอกมาลงในช่อง Page Access Token</li>
+      <li data-step="4">วาง <strong>Page ID</strong> ลงในช่อง Page ID</li>
+      <li data-step="5">คลิกปุ่ม <strong>"บันทึก"</strong> เพื่อบันทึกการตั้งค่า</li>
+    </ul>
+
+    <div class="tip-box">
+      <span class="icon">💡</span>
+      <div>หลังบันทึกแล้ว ระบบจะเชื่อมต่อกับ Facebook Webhook โดยอัตโนมัติ คุณสามารถทดสอบโดยส่งข้อความมาที่เพจได้เลย</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Section 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">เปิดใช้งานแอปสำหรับสาธารณะ (App Review)</div>
+    </div>
+    <ul class="step-list">
+      <li data-step="1">ในโหมด <strong>Development</strong> บอทจะตอบได้เฉพาะบัญชีที่เป็น Admin, Developer, หรือ Tester ของแอปเท่านั้น</li>
+      <li data-step="2">เพื่อให้บอทตอบกลับลูกค้าทั่วไปได้ ต้องขอ App Review จาก Meta</li>
+      <li data-step="3">ไปที่เมนูด้านซ้าย → <strong>App Review → Requests</strong></li>
+      <li data-step="4">ร้องขอสิทธิ์ <code>pages_messaging</code> และส่งเอกสารประกอบตามที่ Meta กำหนด</li>
+      <li data-step="5">เมื่อได้รับอนุมัติ ให้เปลี่ยน App Mode จาก <strong>Development</strong> เป็น <strong>Live</strong></li>
+    </ul>
+    <div class="warning-box">
+      <span class="icon">ℹ️</span>
+      <div>ขั้นตอน App Review อาจใช้เวลา 1–7 วันทำการ สำหรับการทดสอบเบื้องต้นสามารถเพิ่มบัญชีทดสอบเป็น Tester ในหน้า Roles ได้ก่อน</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Summary Table -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-number">📋</div>
+      <div class="section-title">สรุปข้อมูลที่ต้องเตรียม</div>
+    </div>
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>ข้อมูลที่ต้องใช้</th>
+          <th>วิธีหา</th>
+          <th>นำไปใส่ในช่อง</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Page Access Token</td>
+          <td>Messenger Settings → Access Tokens → Generate Token</td>
+          <td>Page Access Token ใน Botify</td>
+        </tr>
+        <tr>
+          <td>Page ID</td>
+          <td>ตัวเลขข้างใต้ชื่อเพจในตาราง Access Tokens</td>
+          <td>Page ID ใน Botify</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Success -->
+  <div class="success-box">
+    <div class="check">🎉</div>
+    <h3>พร้อมใช้งานแล้ว!</h3>
+    <p>บอทของคุณพร้อมตอบกลับลูกค้าผ่าน Facebook Messenger เรียบร้อยแล้ว</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-logo">Botify<span> Docs</span></div>
+    <div class="footer-note">© 2026 Botify · Facebook Messenger Setup Guide · v1.0</div>
+  </div>
+
+</div>
+</body>
+</html>
