@@ -814,18 +814,9 @@ app.get("/privacy", (req, res) => {
   res.status(404).send("Privacy Policy page not found");
 });
 
-// ─── Dashboard (served as SPA) ─────────────────────────────
-app.get("/", (req, res) => { res.redirect("/dashboard"); });
-app.get("/dashboard", (req, res) => {
-  const fs = require("fs");
-  const path = require("path");
-  const htmlPath = path.join(__dirname, "views", "dashboard.html");
-  if (fs.existsSync(htmlPath)) {
-    return res.sendFile(htmlPath);
-  }
-  // Fallback: ถ้าไม่มี views/dashboard.html → redirect ไป /status
-  res.redirect("/status");
-});
+// ─── Dashboard (served as React SPA via app.js catch-all) ──
+// NOTE: GET "/" and "/dashboard" are handled by the static catch-all
+// in app.js which serves client/dist/index.html. Do NOT add redirects here.
 
 // ── GET /inbox — Unified Inbox Dashboard (Auto-serve with injected config) ──
 app.get("/inbox", (req, res) => {

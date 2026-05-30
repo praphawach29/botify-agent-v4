@@ -57,13 +57,19 @@ function PackageManagementPage({
   };
   const pkgColors = {
     Free: "from-slate-600 to-slate-700",
+    Starter: "from-slate-600 to-slate-700",
     Pro: "from-blue-600 to-indigo-700",
-    Business: "from-amber-500 to-orange-600"
+    Standard: "from-blue-600 to-indigo-700",
+    Business: "from-amber-500 to-orange-600",
+    Elite: "from-amber-500 to-orange-600"
   };
   const pkgBorders = {
     Free: "border-gray-300",
+    Starter: "border-gray-300",
     Pro: "border-blue-500",
-    Business: "border-amber-500"
+    Standard: "border-blue-500",
+    Business: "border-amber-500",
+    Elite: "border-amber-500"
   };
   if (loading) return <Loader />;
   return <div>

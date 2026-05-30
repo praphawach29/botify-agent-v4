@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Icon, Icons, api, TokenManager, Loader, Toast, Modal, Field, DropdownSelect } from '../components/Shared';
 
+const API_BASE = "";
+
 export default // ═══════════════════════════════════════════════════════════
 //  LOGIN SCREEN
 // ═══════════════════════════════════════════════════════════

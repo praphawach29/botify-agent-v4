@@ -127,10 +127,10 @@ function BillingPage({
       {label} {count !== undefined && <span className="ml-1 text-xs opacity-70">({count})</span>}
     </button>;
   return <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <h2 className="text-xl font-bold text-gray-900">การเงิน & การชำระเงิน</h2>
-        <button onClick={openCreateBill} className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition">
-          <Icon d={Icons.plus} size={16} /> สร้างบิล
+        <button onClick={openCreateBill} className="flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition w-full sm:w-auto shadow-sm">
+          <Icon d={Icons.plus} size={18} /> สร้างบิล
         </button>
       </div>
 
@@ -139,30 +139,40 @@ function BillingPage({
         {[{
         label: "รายได้รวม",
         val: "฿" + totalRevenue.toLocaleString(),
-        color: "text-emerald-400"
+        color: "text-emerald-600",
+        bg: "bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-emerald-100"
       }, {
         label: "รอชำระ",
         val: pendingBills.length,
-        color: "text-amber-400"
+        color: "text-amber-600",
+        bg: "bg-gradient-to-br from-amber-50 to-amber-100/50 border-amber-100"
       }, {
         label: "ชำระแล้ว",
         val: paidBills.length,
-        color: "text-blue-400"
+        color: "text-blue-600",
+        bg: "bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-100"
       }, {
         label: "ร้านค้าทั้งหมด",
         val: shops.length,
-        color: "text-violet-400"
-      }].map((c, i) => <div key={i} className="bg-white border border-gray-200 rounded-xl p-3 text-center">
-            <div className={"text-xl font-black " + c.color}>{c.val}</div>
-            <div className="text-gray-500 text-xs mt-1">{c.label}</div>
+        color: "text-violet-600",
+        bg: "bg-gradient-to-br from-violet-50 to-violet-100/50 border-violet-100"
+      }].map((c, i) => <div key={i} className={"border rounded-2xl p-4 text-center shadow-sm " + (c.bg || "bg-white border-gray-200")}>
+            <div className={"text-xl md:text-2xl font-black " + c.color}>{c.val}</div>
+            <div className="text-gray-600 text-xs md:text-sm mt-1 font-medium">{c.label}</div>
           </div>)}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-5 flex-wrap">
-        {tabBtn("bills", "บิลทั้งหมด", bills.length)}
-        {tabBtn("usage", "Usage Dashboard", usage.length)}
-        {tabBtn("payment", "วิธีชำระเงินร้านค้า", shops.length)}
+      <div className="flex gap-2 mb-5 overflow-x-auto pb-2 scrollbar-none">
+        {[
+          { id: "bills", label: "บิลทั้งหมด", count: bills.length },
+          { id: "usage", label: "Usage Dashboard", count: usage.length },
+          { id: "payment", label: "วิธีชำระเงินร้านค้า", count: shops.length }
+        ].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} className={"whitespace-nowrap px-4 py-2 text-sm font-medium rounded-xl transition " + (tab === t.id ? "bg-slate-800 text-white shadow-md shadow-slate-800/20" : "bg-white border border-gray-200 text-slate-600 hover:bg-gray-50")}>
+            {t.label} <span className="ml-1 text-xs opacity-70">({t.count})</span>
+          </button>
+        ))}
       </div>
 
       {/* ══════ TAB: Bills ══════ */}
@@ -239,11 +249,11 @@ function BillingPage({
                 <button onClick={() => openPaymentEdit(shop)} className="text-blue-400 hover:text-blue-300 text-xs font-medium transition">ตั้งค่า</button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {shop.payment_transfer !== false && <span className="text-xs px-2 py-1 rounded-full bg-emerald-600/20 text-emerald-300">โอนเงิน</span>}
-                {shop.payment_promptpay && <span className="text-xs px-2 py-1 rounded-full bg-blue-600/20 text-blue-300">PromptPay</span>}
-                {shop.payment_cod && <span className="text-xs px-2 py-1 rounded-full bg-amber-600/20 text-amber-300">COD</span>}
-                {shop.payment_pickup && <span className="text-xs px-2 py-1 rounded-full bg-violet-600/20 text-violet-300">รับหน้าร้าน</span>}
-                {!shop.payment_transfer && !shop.payment_promptpay && !shop.payment_cod && !shop.payment_pickup && <span className="text-xs text-gray-400">ยังไม่ได้ตั้งค่า</span>}
+                {shop.payment_transfer !== false && <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 font-medium">โอนเงิน</span>}
+                {shop.payment_promptpay && <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">PromptPay</span>}
+                {shop.payment_cod && <span className="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 font-medium">COD</span>}
+                {shop.payment_pickup && <span className="text-xs px-2.5 py-1 rounded-full bg-violet-100 text-violet-700 font-medium">รับหน้าร้าน</span>}
+                {!shop.payment_transfer && !shop.payment_promptpay && !shop.payment_cod && !shop.payment_pickup && <span className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 font-medium">ยังไม่ได้ตั้งค่า</span>}
               </div>
             </div>)}
         </div>}

@@ -142,8 +142,8 @@ function SADashboardPage() {
                   <div className="text-gray-900 text-sm">{s.name}</div>
                   <div className="text-gray-400 text-xs">{s.ai_provider || "claude"} | {s.package || "free"}</div>
                 </div>
-                <span className={"text-xs px-2 py-0.5 rounded-full " + (s.status === "active" ? "bg-emerald-600/20 text-emerald-300" : "bg-red-600/20 text-red-300")}>
-                  {s.status || "active"}
+                <span className={"text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm " + (s.status === "active" ? "bg-emerald-500 text-white" : "bg-rose-500 text-white")}>
+                  {(s.status || "active").toUpperCase()}
                 </span>
               </div>)}
           </div>

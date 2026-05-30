@@ -889,7 +889,7 @@ async function callAIAgent(systemPrompt, messages, config = null, client, userKe
           }))}];
 
           const response = await geminiClient.models.generateContent({
-             model: cfg.model,
+             model: cfg.model === 'gemini-3.5-flash-preview' ? 'gemini-1.5-flash' : cfg.model,
              contents: formattedMsgs,
              config: { systemInstruction: systemPrompt, tools: geminiTools, temperature: 0.2 }
           });

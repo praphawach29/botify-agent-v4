@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Botify Backend (Express)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/server.js"],
+      "port": 3000,
+      "autoPort": false
+    },
+    {
+      "name": "Botify Frontend (Vite Dev)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "client",
+      "port": 5173
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Icon, Icons, api, TokenManager, Loader, Toast, Modal, Field, DropdownSelect } from '../components/Shared';
+import { AI_PROVIDERS } from './AIManagementPage';
 
 export default // ═══════════════════════════════════════════════════════════
 //  BOT PERSONALITY CONFIG
@@ -76,12 +77,16 @@ function BotConfig({
               <div className="text-xs text-gray-400 mt-0.5">{ap.desc}</div>
             </button>)}
         </div>
-        <div className="mt-3">
-          <label className="block text-gray-500 text-xs mb-1">Model (ไม่ใส่ = ค่าเริ่มต้น)</label>
-          <input value={info.AI_MODEL || ""} onChange={e => setInfo({
-          ...info,
-          AI_MODEL: e.target.value
-        })} placeholder="เช่น gpt-4o-mini, gemini-1.5-flash" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+        <div className="mt-4">
+          <label className="block text-gray-700 text-sm font-semibold mb-2">Model</label>
+          <DropdownSelect 
+            value={info.AI_MODEL || ""} 
+            onChange={v => setInfo({ ...info, AI_MODEL: v })} 
+            options={[
+              { value: "", label: "--- ค่าเริ่มต้นของ Provider ---" },
+              ...(AI_PROVIDERS.find(p => p.id === (info.AI_PROVIDER || 'claude'))?.models || []).map(m => ({ value: m.value, label: m.label }))
+            ]} 
+          />
         </div>
       </div>
 

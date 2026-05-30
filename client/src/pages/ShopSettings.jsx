@@ -26,12 +26,13 @@ function TeamTab({ toast, shopId }) {
   const auth = getAuth();
 
   const loadTeam = useCallback(() => {
+    if (!shopId) { setLoading(false); return; } // ไม่มี workspace → ไม่ต้องเรียก API
     setLoading(true);
     api("/api/team").then(res => {
       if (res.success) setTeam(res.team);
       else toast(res.error || "โหลดข้อมูลทีมไม่สำเร็จ", "err");
     }).catch(e => toast(e.message, "err")).finally(() => setLoading(false));
-  }, [toast]);
+  }, [toast, shopId]);
 
   useEffect(() => { loadTeam(); }, [loadTeam]);
 
@@ -66,6 +67,18 @@ function TeamTab({ toast, shopId }) {
       toast(e.message, "err");
     }
   };
+
+  // ถ้าไม่มี shopId (เช่น login ด้วย API key แบบ superadmin)
+  if (!shopId) return (
+    <div style={{ background:'#fff', border:'1px solid #e5e7eb', borderRadius:16, padding:'32px 24px', textAlign:'center' }}>
+      <div style={{ fontSize:36, marginBottom:12 }}>👥</div>
+      <div style={{ fontSize:14, fontWeight:700, color:'#0f172a', marginBottom:6 }}>ยังไม่ได้เลือก Workspace</div>
+      <div style={{ fontSize:12, color:'#64748b', lineHeight:1.6 }}>
+        ฟีเจอร์นี้ใช้งานได้เมื่อ Login ด้วย email/password ของเจ้าของร้าน<br/>
+        หรือเลือก workspace จากหน้า Super Admin ก่อนครับ
+      </div>
+    </div>
+  );
 
   if (loading) return <div className="text-gray-500 text-sm py-4">กำลังโหลด...</div>;
 
@@ -285,33 +298,45 @@ function ShopSettings({
     ph: "คืนได้ภายใน 7 วัน..."
   }];
   const inputCls = "w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition";
+  const TABS = [
+    { id: "general", label: "ข้อมูลทั่วไป",   icon: "🏪" },
+    { id: "payment", label: "วิธีชำระเงิน",   icon: "💳" },
+    { id: "slug",    label: "URL ร้านค้า",     icon: "🔗" },
+    { id: "backup",  label: "สำรองข้อมูล",    icon: "💾" },
+    { id: "team",    label: "ทีมงาน",          icon: "👥" },
+  ];
+
   return <div>
-      {/* Header & Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div className="flex flex-col">
-          <h1 className="text-base md:text-xl font-black text-slate-900 leading-tight whitespace-nowrap">ข้อมูลร้าน</h1>
-          <p className="text-[10px] text-gray-400 leading-none mt-0.5 hidden sm:block">ตั้งค่าข้อมูลทั่วไป วิธีรับชำระเงิน และลิงก์ร้านค้าของคุณ</p>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto">
-          {[{
-          id: "general",
-          label: "ข้อมูลทั่วไป"
-        }, {
-          id: "payment",
-          label: "วิธีชำระเงิน"
-        }, {
-          id: "slug",
-          label: "URL ร้านค้า"
-        }, {
-          id: "backup",
-          label: "สำรองข้อมูล"
-        }, {
-          id: "team",
-          label: "ทีมงาน"
-        }].map(t => <button key={t.id} onClick={() => setActiveTab(t.id)} className={"flex-1 sm:flex-none flex items-center justify-center py-2 px-3.5 text-[11px] sm:text-xs font-bold rounded-xl transition-all shadow-sm border " + (activeTab === t.id ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/15" : "bg-white text-slate-600 border-gray-200 hover:bg-gray-50")}>
-              {t.label}
-            </button>)}
-        </div>
+      {/* ── Header ── */}
+      <div style={{ marginBottom: 16 }}>
+        <h1 style={{ fontSize: 'clamp(16px,2.5vw,20px)', fontWeight: 900, color: '#0f172a', margin: '0 0 4px' }}>
+          ข้อมูลร้าน
+        </h1>
+        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>
+          ตั้งค่าข้อมูลทั่วไป วิธีรับชำระเงิน และลิงก์ร้านค้าของคุณ
+        </p>
+      </div>
+
+      {/* ── Scrollable Tab Bar ── */}
+      <div style={{
+        overflowX: 'auto', display: 'flex', gap: 6,
+        marginBottom: 20, paddingBottom: 4,
+        scrollbarWidth: 'none', msOverflowStyle: 'none',
+        WebkitOverflowScrolling: 'touch',
+      }}>
+        {TABS.map(t => (
+          <button key={t.id} onClick={() => setActiveTab(t.id)} style={{
+            display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+            padding: '8px 14px', borderRadius: 12, border: 'none', cursor: 'pointer',
+            fontSize: 12, fontWeight: 700, flexShrink: 0, transition: 'all 0.15s',
+            background: activeTab === t.id ? '#2563eb' : '#f1f5f9',
+            color:      activeTab === t.id ? '#fff'     : '#475569',
+            boxShadow:  activeTab === t.id ? '0 2px 8px rgba(37,99,235,0.3)' : 'none',
+          }}>
+            <span>{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        ))}
       </div>
 
       {/* ── Tab: ข้อมูลทั่วไป ── */}
@@ -328,9 +353,17 @@ function ShopSettings({
           })} placeholder={f.ph} className={inputCls} />}
               </div>)}
           </div>
-          <div className="mt-4 flex justify-end">
-            <button onClick={save} disabled={saving} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">
-              <Icon d={Icons.save} size={16} /> {saving ? "กำลังบันทึก..." : "บันทึกข้อมูลร้าน"}
+          <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+            <button onClick={save} disabled={saving} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              background: saving ? '#93c5fd' : '#2563eb', color: '#fff',
+              fontSize: 14, fontWeight: 700, padding: '11px 24px', borderRadius: 12,
+              border: 'none', cursor: saving ? 'not-allowed' : 'pointer',
+              boxShadow: '0 2px 8px rgba(37,99,235,0.25)', transition: 'all 0.15s',
+              width: 'clamp(160px, 50%, 220px)',
+            }}>
+              <Icon d={Icons.save} size={16} />
+              {saving ? "กำลังบันทึก..." : "บันทึกข้อมูลร้าน"}
             </button>
           </div>
         </div>}
@@ -409,8 +442,10 @@ function ShopSettings({
             </label>
           </div>
 
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-blue-300 text-xs">
-            Bot จะแจ้งวิธีชำระเงินให้ลูกค้าอัตโนมัติตามที่ตั้งค่าไว้
+          <div style={{ background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.22)', borderRadius:12, padding:'10px 14px' }}>
+            <span style={{ fontSize:12, color:'#1e40af', fontWeight:600 }}>
+              💬 Bot จะแจ้งวิธีชำระเงินให้ลูกค้าอัตโนมัติตามที่ตั้งค่าไว้
+            </span>
           </div>
 
           <div className="flex justify-end">
@@ -420,9 +455,13 @@ function ShopSettings({
           </div>
         </div>}
 
-      {activeTab === "payment" && !pay && <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-amber-300 text-sm">
-          ไม่สามารถโหลดข้อมูลวิธีชำระเงินได้ กรุณาลองใหม่อีกครั้ง
-        </div>}
+      {activeTab === "payment" && !pay && (
+        <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:12, padding:'14px 16px' }}>
+          <span style={{ fontSize:13, color:'#92400e', fontWeight:600 }}>
+            ⚠️ ไม่สามารถโหลดข้อมูลวิธีชำระเงินได้ กรุณาลองใหม่อีกครั้ง
+          </span>
+        </div>
+      )}
 
       {/* ── Tab: URL ร้านค้า (Slug) ── */}
       {activeTab === "slug" && <div className="space-y-5 max-w-2xl">
@@ -463,43 +502,31 @@ function ShopSettings({
             {slugInput && slugInput.length < 3 && <div className="text-xs mb-3 text-amber-400">ต้องมีอย่างน้อย 3 ตัวอักษร</div>}
 
             <button onClick={async () => {
-          if (!slugInput || slugInput.length < 3) {
-            toast("Slug ต้องมีอย่างน้อย 3 ตัวอักษร", "err");
-            return;
-          }
-          if (slugInput === slugData.slug) {
-            toast("Slug ไม่มีการเปลี่ยนแปลง", "err");
-            return;
-          }
+          if (!slugInput || slugInput.length < 3) { toast("Slug ต้องมีอย่างน้อย 3 ตัวอักษร", "err"); return; }
+          if (slugInput === slugData.slug) { toast("Slug ไม่มีการเปลี่ยนแปลง", "err"); return; }
           setSavingSlug(true);
-          const res = await api("/api/slug", {
-            method: "PUT",
-            body: {
-              slug: slugInput
-            }
-          });
-          if (res.success) {
-            setSlugData({
-              slug: res.slug,
-              url: res.url
-            });
-            toast("บันทึก URL สำเร็จ!", "ok");
-            setSlugAvailable(null);
-          } else {
-            toast(res.error || "บันทึกไม่สำเร็จ", "err");
-          }
+          const res = await api("/api/slug", { method: "PUT", body: { slug: slugInput } });
+          if (res.success) { setSlugData({ slug: res.slug, url: res.url }); toast("บันทึก URL สำเร็จ!", "ok"); setSlugAvailable(null); }
+          else toast(res.error || "บันทึกไม่สำเร็จ", "err");
           setSavingSlug(false);
-        }} disabled={savingSlug || !slugInput || slugInput.length < 3 || slugInput === slugData.slug || slugAvailable === false} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">
+        }} disabled={savingSlug || !slugInput || slugInput.length < 3 || slugInput === slugData.slug || slugAvailable === false}
+              style={{
+                display:'flex', alignItems:'center', justifyContent:'center', gap:8,
+                width:'100%', padding:'12px 20px', borderRadius:12, border:'none',
+                background: (savingSlug || !slugInput || slugInput.length < 3 || slugInput === slugData.slug || slugAvailable === false) ? '#93c5fd' : '#2563eb',
+                color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer',
+                boxShadow:'0 2px 8px rgba(37,99,235,0.2)', transition:'all 0.15s',
+              }}>
               <Icon d={Icons.save} size={16} /> {savingSlug ? "กำลังบันทึก..." : "บันทึก URL"}
             </button>
           </div>
 
           {/* Info Box */}
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-blue-300 text-xs space-y-1">
-            <p>💡 <b>ประโยชน์ของ URL ร้านค้า:</b></p>
-            <p>• แชร์ลิงก์ร้านให้ลูกค้าดูแค็ตตาล็อกสินค้าได้ทันที</p>
-            <p>• ลูกค้ากดปุ่ม "แชทใน LINE" เพื่อสั่งซื้อผ่าน Bot ได้เลย</p>
-            <p>• ใช้โปรโมทบน Social Media หรือนามบัตรได้</p>
+          <div style={{ background:'rgba(59,130,246,0.07)', border:'1px solid rgba(59,130,246,0.2)', borderRadius:14, padding:'14px 16px' }}>
+            <p style={{ fontSize:12, fontWeight:700, color:'#1e3a8a', margin:'0 0 8px' }}>💡 ประโยชน์ของ URL ร้านค้า</p>
+            {['แชร์ลิงก์ให้ลูกค้าดูแค็ตตาล็อกสินค้าได้ทันที','ลูกค้ากดปุ่ม "แชทใน LINE" เพื่อสั่งซื้อผ่าน Bot ได้เลย','ใช้โปรโมทบน Social Media หรือนามบัตรได้'].map(t => (
+              <p key={t} style={{ fontSize:11, color:'#1e40af', margin:'4px 0', lineHeight:1.5 }}>• {t}</p>
+            ))}
           </div>
         </div>}
 

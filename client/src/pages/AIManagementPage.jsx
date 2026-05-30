@@ -1,5 +1,94 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Icon, Icons, api, TokenManager, Loader, Toast, Modal, Field, DropdownSelect } from '../components/Shared';
+import AIKeyInput from './AIKeyInput';
+
+export const AI_PROVIDERS = [{
+  id: "claude",
+  name: "Claude (Anthropic)",
+  color: "from-orange-500 to-amber-600",
+  border: "border-orange-500",
+  icon: "M12 2a7 7 0 0 0-7 7c0 3 2 5.5 5 7v4h4v-4c3-1.5 5-4 5-7a7 7 0 0 0-7-7z",
+  models: [{
+    value: "claude-sonnet-4-20250514",
+    label: "Claude Sonnet 4",
+    desc: "เร็ว คุ้มค่า เหมาะกับงานทั่วไป",
+    badge: "แนะนำ"
+  }, {
+    value: "claude-opus-4-20250514",
+    label: "Claude Opus 4",
+    desc: "ฉลาดที่สุด เหมาะกับงานซับซ้อน",
+    badge: "Premium"
+  }, {
+    value: "claude-haiku-4-5-20251001",
+    label: "Claude Haiku 4.5",
+    desc: "เร็วมาก ประหยัดที่สุด",
+    badge: "ประหยัด"
+  }]
+}, {
+  id: "openai",
+  name: "OpenAI",
+  color: "from-emerald-500 to-teal-600",
+  border: "border-emerald-500",
+  icon: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 8v4l3 3",
+  models: [{
+    value: "gpt-4o",
+    label: "GPT-4o",
+    desc: "Multimodal ครบทุกด้าน",
+    badge: "แนะนำ"
+  }, {
+    value: "gpt-4o-mini",
+    label: "GPT-4o Mini",
+    desc: "เร็ว ราคาถูก เหมาะร้านทั่วไป",
+    badge: "ประหยัด"
+  }, {
+    value: "gpt-4-turbo",
+    label: "GPT-4 Turbo",
+    desc: "แม่นยำสูง context ยาว"
+  }]
+}, {
+  id: "gemini",
+  name: "Gemini (Google)",
+  color: "from-blue-500 to-indigo-600",
+  border: "border-blue-500",
+  icon: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
+  models: [{
+    value: "gemini-3.5-flash-preview",
+    label: "Gemini 3.5 Flash Preview",
+    desc: "โมเดลทดสอบล่าสุด เร็วและฉลาด",
+    badge: "ใหม่"
+  }, {
+    value: "gemini-1.5-flash",
+    label: "Gemini 1.5 Flash",
+    desc: "เสถียร เร็ว ฟรี tier สูง",
+    badge: "แนะนำ"
+  }, {
+    value: "gemini-1.5-pro",
+    label: "Gemini 1.5 Pro",
+    desc: "Context ยาว 1M tokens"
+  }, {
+    value: "gemini-1.0-pro",
+    label: "Gemini 1.0 Pro",
+    desc: "เร็ว ราคาถูก",
+    badge: "ประหยัด"
+  }]
+}, {
+  id: "typhoon",
+  name: "Typhoon (SCB 10X)",
+  color: "from-violet-500 to-purple-600",
+  border: "border-violet-500",
+  icon: "M12 2a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2z M9 12h0 M15 12h0 M12 2v2",
+  models: [{
+    value: "typhoon-v2-70b-instruct",
+    label: "Typhoon v2 70B",
+    desc: "เก่งภาษาไทยที่สุด",
+    badge: "แนะนำ"
+  }, {
+    value: "typhoon-v2-8b-instruct",
+    label: "Typhoon v2 8B",
+    desc: "เบา เร็ว เหมาะงานง่าย",
+    badge: "ประหยัด"
+  }]
+}];
 
 export default function AIManagementPage({
   toast
@@ -83,15 +172,17 @@ export default function AIManagementPage({
   };
   if (loading) return <Loader />;
   return <div>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">จัดการ AI</h2>
-      <p className="text-gray-500 text-sm mb-6">ตั้งค่า API Keys, เลือก Provider และ Model สำหรับแต่ละร้านค้า</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-0">จัดการ AI</h2>
+        <p className="text-gray-500 text-sm">ตั้งค่า API Keys, เลือก Provider และ Model สำหรับร้านค้า</p>
+      </div>
 
       {/* ══════ Section 1: Global API Keys ══════ */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 mb-8">
-        <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-2xl p-4 md:p-6 mb-6 shadow-sm">
+        <h3 className="text-base md:text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
           <Icon d={Icons.save} size={18} /> API Keys กลาง
         </h3>
-        <p className="text-gray-500 text-xs mb-4">Key กลางที่ทุกร้านใช้ร่วมกัน (ร้านที่มี key ของตัวเองจะใช้ key ของร้านแทน)</p>
+        <p className="text-gray-500 text-xs md:text-sm mb-4">Key กลางที่ทุกร้านใช้ร่วมกัน (ร้านที่มี key ของตัวเองจะใช้ key ของร้านแทน)</p>
         <div className="space-y-3">
           <AIKeyInput label="Claude API Key" settingKey="claude_key" settings={settings} onSave={reloadSettings} />
           <AIKeyInput label="OpenAI API Key" settingKey="openai_key" settings={settings} onSave={reloadSettings} />
@@ -104,39 +195,39 @@ export default function AIManagementPage({
       </div>
 
       {/* ══════ Section 2: AI Provider Cards ══════ */}
-      <div className="grid sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8">
         {AI_PROVIDERS.map(p => {
         const isOpen = expandedProvider === p.id;
         const shopCount = shops.filter(s => s.ai_provider === p.id).length;
         const hasGlobalKey = settings[p.id === "claude" ? "claude_key_set" : p.id === "openai" ? "openai_key_set" : p.id === "gemini" ? "gemini_key_set" : "typhoon_key_set"];
-        return <div key={p.id} className={"bg-white border rounded-2xl overflow-hidden transition-all " + p.border}>
+        return <div key={p.id} className={"bg-white border shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md " + p.border}>
               <button onClick={() => setExpandedProvider(isOpen ? null : p.id)} className="w-full text-left">
                 <div className={"bg-gradient-to-r p-4 flex items-center gap-3 " + p.color}>
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-inner">
                     <Icon d={p.icon} size={20} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-gray-900 font-bold flex items-center gap-2">
+                    <div className="text-gray-900 font-bold flex items-center gap-2 text-sm md:text-base">
                       {p.name}
-                      {hasGlobalKey && <span className="w-2 h-2 rounded-full bg-emerald-400" title="มี API Key แล้ว" />}
+                      {hasGlobalKey && <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm" title="มี API Key แล้ว" />}
                     </div>
-                    <div className="text-white/70 text-xs">{p.models.length} models | ใช้อยู่ {shopCount} ร้าน</div>
+                    <div className="text-white/80 text-xs mt-0.5">{p.models.length} models | ใช้อยู่ {shopCount} ร้าน</div>
                   </div>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={"text-white/70 transition-transform " + (isOpen ? "rotate-180" : "")}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={"text-white/80 transition-transform " + (isOpen ? "rotate-180" : "")}>
                     <path d="M6 9l6 6 6-6" />
                   </svg>
                 </div>
               </button>
-              {isOpen && <div className="p-4 space-y-2">
-                  {p.models.map(m => <div key={m.value} className="bg-gray-50 border border-gray-200/50 rounded-xl p-3 flex items-center gap-3">
+              {isOpen && <div className="p-3 md:p-4 space-y-2 bg-gray-50/50">
+                  {p.models.map(m => <div key={m.value} className="bg-white border border-gray-200 rounded-xl p-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-3 shadow-sm hover:shadow-md transition">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-gray-900 text-sm font-medium">{m.label}</span>
-                          {m.badge && <span className={"text-xs px-1.5 py-0.5 rounded-full " + (m.badge === "แนะนำ" ? "bg-emerald-600/20 text-emerald-300" : m.badge === "Premium" ? "bg-amber-600/20 text-amber-300" : "bg-slate-600/30 text-gray-500")}>{m.badge}</span>}
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-gray-900 text-sm font-bold">{m.label}</span>
+                          {m.badge && <span className={"text-[10px] px-2 py-0.5 rounded-full font-semibold " + (m.badge === "แนะนำ" ? "bg-emerald-100 text-emerald-700" : m.badge === "Premium" ? "bg-amber-100 text-amber-700" : m.badge === "ใหม่" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600")}>{m.badge}</span>}
                         </div>
-                        <div className="text-gray-500 text-xs mt-0.5">{m.desc}</div>
+                        <div className="text-gray-500 text-xs">{m.desc}</div>
                       </div>
-                      <div className="text-gray-400 text-xs whitespace-nowrap font-mono hidden sm:block">{m.value.length > 25 ? m.value.slice(0, 22) + "..." : m.value}</div>
+                      <div className="text-gray-400 text-xs font-mono bg-gray-50 px-2 py-1 rounded truncate self-start md:self-auto max-w-full md:max-w-[120px]" title={m.value}>{m.value.length > 25 ? m.value.slice(0, 22) + "..." : m.value}</div>
                     </div>)}
                 </div>}
             </div>;
@@ -144,11 +235,11 @@ export default function AIManagementPage({
       </div>
 
       {/* ══════ Section 3: Per-Shop AI Assignment ══════ */}
-      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+      <h3 className="text-base md:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
         <Icon d={Icons.settings} size={18} /> ตั้งค่า AI ประจำร้านค้า
       </h3>
 
-      {shops.length === 0 ? <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-400">ยังไม่มีร้านค้า</div> : <div className="space-y-3">
+      {shops.length === 0 ? <div className="bg-white border border-gray-200 rounded-xl p-8 text-center text-gray-400 shadow-sm">ยังไม่มีร้านค้า</div> : <div className="space-y-4">
           {shops.map(shop => {
         const prov = shop.ai_provider || "claude";
         const model = shop.ai_model || "";
@@ -157,24 +248,24 @@ export default function AIManagementPage({
         const isSavingThis = saving === shop.id;
         const hasShopKey = !!(shop.ai_key && shop.ai_key !== "");
         const isEditingKey = shopKeyEditing === shop.id;
-        return <div key={shop.id} className={"bg-white border rounded-xl p-4 transition " + (isSavingThis ? "border-blue-500/50" : "border-gray-200")}>
+        return <div key={shop.id} className={"bg-white border rounded-2xl p-4 md:p-5 transition duration-300 shadow-sm hover:shadow-md " + (isSavingThis ? "border-blue-500 shadow-blue-100" : "border-gray-200")}>
                 {/* Shop name + status */}
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={"w-2.5 h-2.5 rounded-full " + (shop.status === "active" ? "bg-emerald-400" : "bg-red-400")} />
-                  <span className="text-gray-900 font-medium">{shop.name}</span>
-                  {isSavingThis && <span className="text-blue-400 text-xs animate-pulse ml-auto">กำลังบันทึก...</span>}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className={"w-2.5 h-2.5 rounded-full shadow-sm " + (shop.status === "active" ? "bg-emerald-500" : "bg-rose-500")} />
+                  <span className="text-gray-900 font-bold text-sm md:text-base">{shop.name}</span>
+                  {isSavingThis && <span className="text-blue-500 text-xs font-semibold animate-pulse ml-auto bg-blue-50 px-2 py-1 rounded-full">กำลังบันทึก...</span>}
                 </div>
                 {/* Provider + Model dropdowns */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div>
-                    <label className="block text-gray-500 text-xs mb-1">AI Provider</label>
+                    <label className="block text-gray-700 font-semibold text-xs mb-1.5">AI Provider</label>
                     <DropdownSelect value={prov} onChange={v => changeProvider(shop.id, v)} options={AI_PROVIDERS.map(x => ({
                 value: x.id,
                 label: x.name
               }))} />
                   </div>
                   <div>
-                    <label className="block text-gray-500 text-xs mb-1">Model</label>
+                    <label className="block text-gray-700 font-semibold text-xs mb-1.5">Model</label>
                     <DropdownSelect value={model} onChange={v => changeModel(shop.id, prov, v)} options={modelOptions} placeholder="เลือก Model" />
                   </div>
                 </div>
@@ -182,7 +273,7 @@ export default function AIManagementPage({
                 <div className="border-t border-gray-200/50 pt-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-500 text-xs">API Key ของร้าน</span>
+                      <span className="text-gray-700 font-semibold text-xs">API Key ของร้าน</span>
                       {hasShopKey ? <span className="text-xs px-1.5 py-0.5 rounded-full bg-emerald-600/20 text-emerald-300">ใช้ Key ของร้าน</span> : <span className="text-xs px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">ใช้ Key กลาง</span>}
                     </div>
                     {!isEditingKey && <div className="flex gap-1.5">
@@ -207,12 +298,15 @@ export default function AIManagementPage({
         </div>}
 
       {/* ── Info Box ── */}
-      <div className="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 text-blue-300 text-xs space-y-1">
-        <div className="font-semibold text-sm mb-1">คำแนะนำการเลือก AI</div>
-        <div>• <strong>Claude Sonnet 4</strong> — สมดุลระหว่างความเร็วและความฉลาด เหมาะกับร้านค้าทั่วไป</div>
-        <div>• <strong>Typhoon v2 70B</strong> — เข้าใจภาษาไทยดีที่สุด เหมาะกับร้านค้าที่สื่อสารภาษาไทย 100%</div>
-        <div>• <strong>GPT-4o Mini / Gemini Flash</strong> — ราคาถูก เหมาะกับร้านค้า Free tier ที่ต้องการประหยัด</div>
-        <div>• ร้านค้าที่ใส่ Key ของตัวเองจะถูกคิดค่าใช้จ่ายจาก Key ของร้านนั้นเอง</div>
+      <div className="mt-8 bg-blue-50 border-l-4 border-blue-500 rounded-r-xl p-4 md:p-5 text-blue-900 shadow-sm">
+        <div className="font-bold text-sm md:text-base mb-2 flex items-center gap-2">💡 คำแนะนำการเลือก AI</div>
+        <div className="space-y-1.5 text-xs md:text-sm">
+          <div>• <strong>Claude Sonnet 3.5</strong> — สมดุลระหว่างความเร็วและความฉลาด เหมาะกับร้านค้าทั่วไป</div>
+          <div>• <strong>Gemini 3.5 Flash Preview</strong> — รุ่นทดสอบใหม่ล่าสุดจาก Google เร็วและราคาถูก</div>
+          <div>• <strong>Typhoon v2 70B</strong> — เข้าใจภาษาไทยดีที่สุด เหมาะกับร้านค้าที่สื่อสารภาษาไทย 100%</div>
+          <div>• <strong>GPT-4o Mini</strong> — ราคาถูก เหมาะกับร้านค้า Free tier ที่ต้องการประหยัด</div>
+          <div className="mt-2 pt-2 border-t border-blue-200 text-blue-800 font-medium">* ร้านค้าที่ใส่ Key ของตัวเองจะถูกคิดค่าใช้จ่ายจาก Key ของร้านนั้นเอง</div>
+        </div>
       </div>
     </div>;
 }

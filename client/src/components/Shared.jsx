@@ -246,7 +246,7 @@ export function DropdownSelect({
   const displayLabel = selected ? typeof selected === "object" ? selected.label : selected : placeholder || "-- เลือก --";
   return <div ref={ref} className={"relative " + (className || "")}>
       <button type="button" onClick={() => setOpen(!open)} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition flex items-center justify-between text-left" style={{
-      color: selected ? "#fff" : "#94a3b8"
+      color: selected ? "#111827" : "#64748b"
     }}>
         <span className="truncate">{displayLabel}</span>
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={"transition-transform " + (open ? "rotate-180" : "")}><path d="M6 9l6 6 6-6" /></svg>
@@ -261,7 +261,7 @@ export function DropdownSelect({
         return <button key={i} type="button" onClick={() => {
           onChange(optVal);
           setOpen(false);
-        }} className={"w-full text-left px-3 py-2.5 text-sm transition truncate " + (isSelected ? "bg-blue-600/30 text-blue-300" : "text-gray-700 hover:bg-gray-100/60 active:bg-gray-100")}>
+        }} className={"w-full text-left px-3 py-2.5 text-sm transition truncate font-medium " + (isSelected ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-100/60 active:bg-gray-200")}>
                 {optLabel}
               </button>;
       })}

@@ -30,6 +30,33 @@ import ProductsPage from './pages/ProductsPage';
 import OrdersPage from './pages/OrdersPage';
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
+// ── Error Boundary ────────────────────────────────────────
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: "40px", maxWidth: "600px", margin: "0 auto" }}>
+          <h2 style={{ color: "#ef4444", marginBottom: "12px" }}>⚠️ เกิดข้อผิดพลาด</h2>
+          <pre style={{ background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px",
+            padding: "16px", fontSize: "12px", overflowX: "auto", whiteSpace: "pre-wrap", color: "#7f1d1d" }}>
+            {this.state.error?.message}
+            {"\n\n"}
+            {this.state.error?.stack}
+          </pre>
+          <button onClick={() => this.setState({ error: null })}
+            style={{ marginTop: "16px", padding: "8px 20px", background: "#3b82f6",
+              color: "#fff", border: "none", borderRadius: "8px", cursor: "pointer" }}>
+            ลองใหม่
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 // ═══════════════════════════════════════════════════════════
 //  BOTIFY Admin Dashboard — React SPA
 //  ฟีเจอร์ครบ: Login, Stats, Shop Settings, Products,
@@ -126,88 +153,7 @@ function getAuth() {
 // ═══════════════════════════════════════════════════════════
 //  SUPER ADMIN — AI Management Page
 // ═══════════════════════════════════════════════════════════
-const AI_PROVIDERS = [{
-  id: "claude",
-  name: "Claude (Anthropic)",
-  color: "from-orange-500 to-amber-600",
-  border: "border-orange-500",
-  icon: "M12 2a7 7 0 0 0-7 7c0 3 2 5.5 5 7v4h4v-4c3-1.5 5-4 5-7a7 7 0 0 0-7-7z",
-  models: [{
-    value: "claude-sonnet-4-20250514",
-    label: "Claude Sonnet 4",
-    desc: "เร็ว คุ้มค่า เหมาะกับงานทั่วไป",
-    badge: "แนะนำ"
-  }, {
-    value: "claude-opus-4-20250514",
-    label: "Claude Opus 4",
-    desc: "ฉลาดที่สุด เหมาะกับงานซับซ้อน",
-    badge: "Premium"
-  }, {
-    value: "claude-haiku-4-5-20251001",
-    label: "Claude Haiku 4.5",
-    desc: "เร็วมาก ประหยัดที่สุด",
-    badge: "ประหยัด"
-  }]
-}, {
-  id: "openai",
-  name: "OpenAI",
-  color: "from-emerald-500 to-teal-600",
-  border: "border-emerald-500",
-  icon: "M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 8v4l3 3",
-  models: [{
-    value: "gpt-4o",
-    label: "GPT-4o",
-    desc: "Multimodal ครบทุกด้าน",
-    badge: "แนะนำ"
-  }, {
-    value: "gpt-4o-mini",
-    label: "GPT-4o Mini",
-    desc: "เร็ว ราคาถูก เหมาะร้านทั่วไป",
-    badge: "ประหยัด"
-  }, {
-    value: "gpt-4-turbo",
-    label: "GPT-4 Turbo",
-    desc: "แม่นยำสูง context ยาว"
-  }]
-}, {
-  id: "gemini",
-  name: "Gemini (Google)",
-  color: "from-blue-500 to-indigo-600",
-  border: "border-blue-500",
-  icon: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
-  models: [{
-    value: "gemini-1.5-flash",
-    label: "Gemini 1.5 Flash",
-    desc: "เร็ว ฟรี tier สูง",
-    badge: "แนะนำ"
-  }, {
-    value: "gemini-1.5-pro",
-    label: "Gemini 1.5 Pro",
-    desc: "Context ยาว 1M tokens"
-  }, {
-    value: "gemini-1.0-pro",
-    label: "Gemini 1.0 Pro",
-    desc: "เร็ว ราคาถูก",
-    badge: "ประหยัด"
-  }]
-}, {
-  id: "typhoon",
-  name: "Typhoon (SCB 10X)",
-  color: "from-violet-500 to-purple-600",
-  border: "border-violet-500",
-  icon: "M12 2a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2z M9 12h0 M15 12h0 M12 2v2",
-  models: [{
-    value: "typhoon-v2-70b-instruct",
-    label: "Typhoon v2 70B",
-    desc: "เก่งภาษาไทยที่สุด",
-    badge: "แนะนำ"
-  }, {
-    value: "typhoon-v2-8b-instruct",
-    label: "Typhoon v2 8B",
-    desc: "เบา เร็ว เหมาะงานง่าย",
-    badge: "ประหยัด"
-  }]
-}];
+
 
 // ═══════════════════════════════════════════════════════════
 //  SUPER ADMIN — Billing & Payment Page
@@ -685,8 +631,8 @@ function App() {
         }} />
         </div>
 
-        <div style={{
-        padding: "24px 28px"
+        <div className="page-content" style={{
+        padding: "clamp(14px, 4vw, 28px) clamp(14px, 4vw, 28px)"
       }}>
           {!emailVerified && !isSuperAdmin && <div style={{
           background: "rgba(245,158,11,0.1)",
@@ -736,7 +682,7 @@ function App() {
                 {sendingVerify ? "กำลังส่ง..." : "📧 ส่งลิงก์ยืนยัน"}
               </button>
             </div>}
-          {renderPage()}
+          <ErrorBoundary>{renderPage()}</ErrorBoundary>
         </div>
 
         <div style={{

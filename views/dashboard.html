@@ -1270,135 +1270,139 @@ function BotConfig({ toast }) {
         </button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-        <h3 className="text-gray-900 font-semibold text-sm mb-3">🎭 บุคลิก Bot</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm hover:shadow-md transition duration-300">
+        <h3 className="text-gray-900 font-bold text-sm md:text-base mb-4 flex items-center gap-2">🎭 บุคลิก Bot</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
           {personalities.map(p => (
             <button key={p} onClick={() => setInfo({ ...info, PERSONALITY: p })}
-              className={"py-2 px-3 rounded-lg text-sm font-medium transition border " + (info.PERSONALITY === p ? "bg-blue-50 border-blue-500 text-blue-700" : "bg-gray-50 border-gray-300 text-gray-500 hover:border-gray-400")}>
+              className={"py-2.5 px-3 rounded-lg text-sm font-semibold transition border " + (info.PERSONALITY === p ? "bg-blue-50 border-blue-500 text-blue-700 shadow-inner" : "bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-100")}>
               {p}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4 relative overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 relative overflow-hidden shadow-sm hover:shadow-md transition duration-300">
         {(!info.PACKAGE_NAME || info.PACKAGE_NAME.toLowerCase() !== "enterprise") && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-4 text-center">
-            <div className="bg-white px-6 py-4 rounded-2xl shadow-xl border border-purple-100 max-w-sm">
-              <div className="text-3xl mb-2">🔑</div>
-              <h4 className="text-purple-700 font-bold text-lg mb-1">ฟีเจอร์พรีเมียม</h4>
-              <p className="text-gray-600 text-xs mb-3">ใส่ API Key ของตัวเอง (BYOK) และเชื่อมต่อ AI Provider อื่นๆ สงวนสิทธิ์สำหรับแพ็กเกจ Enterprise เท่านั้น</p>
+            <div className="bg-white px-6 py-5 rounded-2xl shadow-xl border border-purple-100 max-w-sm">
+              <div className="text-4xl mb-3">🔑</div>
+              <h4 className="text-purple-700 font-bold text-lg md:text-xl mb-2">ฟีเจอร์พรีเมียม</h4>
+              <p className="text-gray-600 text-xs md:text-sm mb-4 leading-relaxed">ใส่ API Key ของตัวเอง (BYOK) และเชื่อมต่อ AI Provider อื่นๆ สงวนสิทธิ์สำหรับแพ็กเกจ Enterprise เท่านั้น</p>
               <button onClick={() => window.dispatchEvent(new CustomEvent("switchTab", { detail: "plans" }))}
-                className="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-md">
+                className="bg-purple-600 hover:bg-purple-700 text-white text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg transition shadow-md w-full">
                 อัปเกรดเป็น Enterprise
               </button>
             </div>
           </div>
         )}
-        <h3 className="text-gray-900 font-semibold text-sm mb-3">🧠 โมเดล AI เฉพาะแบรนด์ (BYOK)</h3>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <h3 className="text-gray-900 font-bold text-sm md:text-base mb-4 flex items-center gap-2">🧠 โมเดล AI เฉพาะแบรนด์ (BYOK)</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
-            <label className="block text-gray-500 text-xs mb-1">AI Provider</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">AI Provider</label>
             <select value={info.AI_PROVIDER || "claude"} onChange={e => setInfo({ ...info, AI_PROVIDER: e.target.value })}
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-purple-500 transition">
+              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition">
               {aiProviders.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">Custom API Key</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">Custom API Key</label>
             <input type="password" value={info.CUSTOM_AI_KEY || ""} onChange={e => setInfo({ ...info, CUSTOM_AI_KEY: e.target.value })}
-              placeholder="sk-..." className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-purple-500 transition" />
-            <p className="text-[10px] text-gray-400 mt-1">หากกรอก API Key ระบบจะไม่หักโควต้า AI Credits ของร้าน</p>
+              placeholder="sk-..." className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition" />
+            <p className="text-[11px] text-gray-500 mt-1.5">หากกรอก API Key ระบบจะไม่หักโควต้า AI Credits ของร้าน</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-        <h3 className="text-gray-900 font-semibold text-sm mb-3">⏰ ตั้งเวลาแจ้งเตือน</h3>
-        <div className="grid sm:grid-cols-2 gap-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm hover:shadow-md transition duration-300">
+        <h3 className="text-gray-900 font-bold text-sm md:text-base mb-4 flex items-center gap-2">⏰ ตั้งเวลาแจ้งเตือน</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
-            <label className="block text-gray-500 text-xs mb-1">Follow-up หลังสนใจ (ชม.)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">Follow-up หลังสนใจ (ชม.)</label>
             <input type="number" value={info.FOLLOWUP_HOURS || ""} onChange={e => setInfo({ ...info, FOLLOWUP_HOURS: e.target.value })}
-              placeholder="24" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              placeholder="24" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">แจ้งเตือนชำระเงินหลัง (ชม.)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">แจ้งเตือนชำระเงินหลัง (ชม.)</label>
             <input type="number" value={info.UNPAID_REMINDER_HOURS || ""} onChange={e => setInfo({ ...info, UNPAID_REMINDER_HOURS: e.target.value })}
-              placeholder="2" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              placeholder="2" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">แจ้งเตือนสูงสุด (ครั้ง)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">แจ้งเตือนสูงสุด (ครั้ง)</label>
             <input type="number" value={info.UNPAID_MAX_REMINDERS || ""} onChange={e => setInfo({ ...info, UNPAID_MAX_REMINDERS: e.target.value })}
-              placeholder="3" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              placeholder="3" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">แจ้งเตือนสต็อกต่ำ (ชิ้น)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">แจ้งเตือนสต็อกต่ำ (ชิ้น)</label>
             <input type="number" value={info.LOW_STOCK_LIMIT || ""} onChange={e => setInfo({ ...info, LOW_STOCK_LIMIT: e.target.value })}
-              placeholder="3" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              placeholder="3" className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 mb-4">
-        <h3 className="text-gray-900 font-semibold text-sm mb-3">💬 เชื่อมต่อ LINE OA</h3>
-        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3 mb-4 text-emerald-800 text-xs leading-relaxed">
-          <strong>วิธีเชื่อมต่อ LINE OA:</strong><br/>
-          1. ไปที่ <a href="https://developers.line.biz/" target="_blank" className="underline font-medium text-emerald-900 hover:text-emerald-700">LINE Developers Console</a> → สร้าง Messaging API Channel<br/>
-          2. คัดลอก <strong>Channel Access Token</strong> และ <strong>Bot User ID</strong> มาใส่ด้านล่าง<br/>
-          3. ตั้ง Webhook URL เป็น: <code className="bg-white/80 px-1 py-0.5 rounded border border-emerald-200">https://your-domain.com/webhook/line</code><br/>
-          4. กดบันทึก แล้ว Bot จะตอบลูกค้าอัตโนมัติตามข้อมูลร้านค้าและสินค้าของคุณ
+      <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm hover:shadow-md transition duration-300">
+        <h3 className="text-gray-900 font-bold text-sm md:text-base mb-4 flex items-center gap-2">💬 เชื่อมต่อ LINE OA</h3>
+        
+        <div className="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-5 text-blue-900 shadow-sm">
+          <strong className="text-blue-950 mb-2 block text-sm md:text-base flex items-center gap-2">🔌 วิธีเชื่อมต่อ LINE OA:</strong>
+          <div className="pl-2 space-y-1.5 text-xs md:text-sm leading-relaxed">
+            <p>1. ไปที่ <a href="https://developers.line.biz/" target="_blank" className="underline font-bold text-blue-700 hover:text-blue-500">LINE Developers Console</a> → สร้าง Messaging API Channel</p>
+            <p>2. คัดลอก <strong>Channel Access Token</strong> และ <strong>Bot User ID</strong> มาใส่ด้านล่าง</p>
+            <p>3. ตั้ง Webhook URL เป็น: <code className="bg-white px-2 py-0.5 rounded border border-blue-200 font-mono text-blue-800 font-semibold shadow-sm ml-1">https://your-domain.com/webhook/line</code></p>
+            <p>4. กดบันทึก แล้ว Bot จะตอบลูกค้าอัตโนมัติตามข้อมูลร้านค้าและสินค้าของคุณ</p>
+          </div>
         </div>
-        <div className="grid sm:grid-cols-2 gap-3">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <div>
-            <label className="block text-gray-500 text-xs mb-1">LINE Channel Access Token</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">LINE Channel Access Token</label>
             <input value={info.LINE_TOKEN || ""} onChange={e => setInfo({ ...info, LINE_TOKEN: e.target.value })}
               placeholder="ใส่ Token จาก LINE Developers"
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">LINE Bot User ID</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">LINE Bot User ID</label>
             <input value={info.LINE_BOT_ID || ""} onChange={e => setInfo({ ...info, LINE_BOT_ID: e.target.value })}
               placeholder="U... (จาก Basic settings)"
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">LINE Owner User ID (สำหรับแจ้งเตือน)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">LINE Owner User ID (สำหรับแจ้งเตือน)</label>
             <input value={info.OWNER_LINE_ID || ""} onChange={e => setInfo({ ...info, OWNER_LINE_ID: e.target.value })}
               placeholder="Uxxxx (Your LINE user ID)"
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
           <div>
-            <label className="block text-gray-500 text-xs mb-1">Google Sheet ID (สำหรับ Sync ข้อมูล)</label>
+            <label className="block text-gray-600 font-medium text-xs md:text-sm mb-1.5">Google Sheet ID (สำหรับ Sync ข้อมูล)</label>
             <input value={info.SHEET_ID || ""} onChange={e => setInfo({ ...info, SHEET_ID: e.target.value })}
               placeholder="ใส่ ID จาก URL ของ Google Sheet"
-              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm outline-none focus:border-blue-500 transition" />
+              className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
           </div>
         </div>
         {info.LINE_TOKEN && (
-          <div className="mt-3 flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="text-emerald-400 text-xs">LINE OA เชื่อมต่อแล้ว — Bot พร้อมตอบลูกค้าอัตโนมัติ</span>
+          <div className="mt-4 flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="text-emerald-700 font-medium text-xs md:text-sm">LINE OA เชื่อมต่อแล้ว — Bot พร้อมตอบลูกค้าอัตโนมัติ</span>
           </div>
         )}
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-5 relative overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 relative overflow-hidden shadow-sm hover:shadow-md transition duration-300">
         {(!info.PACKAGE_NAME || info.PACKAGE_NAME.toLowerCase() !== "enterprise") && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center p-4 text-center">
-            <div className="bg-white px-6 py-4 rounded-2xl shadow-xl border border-indigo-100 max-w-sm">
-              <div className="text-3xl mb-2">✨</div>
-              <h4 className="text-indigo-700 font-bold text-lg mb-1">AI Prompt Generator</h4>
-              <p className="text-gray-600 text-xs mb-3">ปรับแต่งบุคลิกบอทเฉพาะแบรนด์ของคุณด้วย AI สงวนสิทธิ์สำหรับแพ็กเกจ Enterprise เท่านั้น</p>
+            <div className="bg-white px-6 py-5 rounded-2xl shadow-xl border border-indigo-100 max-w-sm">
+              <div className="text-4xl mb-3">✨</div>
+              <h4 className="text-indigo-700 font-bold text-lg md:text-xl mb-2">AI Prompt Generator</h4>
+              <p className="text-gray-600 text-xs md:text-sm mb-4 leading-relaxed">ปรับแต่งบุคลิกบอทเฉพาะแบรนด์ของคุณด้วย AI สงวนสิทธิ์สำหรับแพ็กเกจ Enterprise เท่านั้น</p>
               <button onClick={() => window.dispatchEvent(new CustomEvent("switchTab", { detail: "plans" }))}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition shadow-md">
+                className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-5 py-2.5 rounded-lg transition shadow-md w-full">
                 อัปเกรดเป็น Enterprise
               </button>
             </div>
           </div>
         )}
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-gray-900 font-semibold text-sm">📝 Custom Prompt (เพิ่มเติม)</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+          <h3 className="text-gray-900 font-bold text-sm md:text-base flex items-center gap-2">📝 Custom Prompt (เพิ่มเติม)</h3>
           <button type="button" onClick={async () => {
             const brandIdea = prompt("📝 ใส่แนวคิดสั้นๆ เช่น: วัยรุ่น คุยสนุก เน้นขาย เสื้อผ้า");
             if(brandIdea) {
@@ -1412,13 +1416,13 @@ function BotConfig({ toast }) {
               } catch(e) { toast("ไม่สามารถเรียก AI ได้", "err"); }
               setSaving(false);
             }
-          }} className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm font-medium">
-            <Icon d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 8v4l3 3" size={12} /> ให้ AI ช่วยแต่ง Prompt
+          }} className="w-full sm:w-auto justify-center text-xs md:text-sm bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition shadow-sm font-medium">
+            <Icon d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 8v4l3 3" size={14} /> ให้ AI ช่วยแต่ง Prompt
           </button>
         </div>
         <textarea value={info.SYSTEM_PROMPT || ""} onChange={e => setInfo({ ...info, SYSTEM_PROMPT: e.target.value })}
           placeholder="เพิ่มคำสั่งพิเศษให้ Bot เช่น: ห้ามลดราคาเกิน 10%, แนะนำสินค้า X เสมอ..."
-          rows={5} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-3 py-3 text-gray-900 text-sm outline-none focus:border-indigo-500 transition resize-none" />
+          rows={6} className="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition resize-none leading-relaxed" />
       </div>
     </div>
   );
@@ -2537,8 +2541,8 @@ function ShopManagementPage({ toast }) {
                 อีเมลเจ้าของ: {s.owner_email || "ไม่มีข้อมูล"}
               </div>
               <div className="flex items-center gap-2 mt-1">
-                <span className={"text-xs px-2 py-0.5 rounded-full font-medium " + (s.status === "active" ? "bg-emerald-100 text-emerald-800" : "bg-red-100 text-red-800")}>
-                  {s.status || "active"}
+                <span className={"text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm " + (s.status === "active" ? "bg-emerald-500 text-white" : "bg-rose-500 text-white")}>
+                  {(s.status || "active").toUpperCase()}
                 </span>
                 {(s.plan_expires_at || s.trial_expires_at) && <span className="text-gray-400 text-xs">หมดอายุ: {new Date(s.plan_expires_at || s.trial_expires_at).toLocaleDateString('th-TH')}</span>}
               </div>

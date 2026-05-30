@@ -90,35 +90,10 @@ function SAPaymentPage({
 
       {/* Gateway Status */}
       <div className="flex gap-3 mb-5 flex-wrap">
-        {Object.entries(gateways).map(([k, v]) => <div key={k} style={{
-        background: v.enabled ? "rgba(16,185,129,0.1)" : "rgba(100,116,139,0.1)",
-        border: `1px solid ${v.enabled ? "rgba(16,185,129,0.3)" : "#e5e7eb"}`,
-        borderRadius: "8px",
-        padding: "8px 14px",
-        display: "flex",
-        alignItems: "center",
-        gap: "6px"
-      }}>
-            <span style={{
-          width: "8px",
-          height: "8px",
-          borderRadius: "50%",
-          background: v.enabled ? "#10b981" : "#64748b"
-        }} />
-            <span style={{
-          color: v.enabled ? "#6ee7b7" : "#94a3b8",
-          fontSize: "12px",
-          fontWeight: 600,
-          textTransform: "capitalize"
-        }}>{k}</span>
-            {v.testMode && <span style={{
-          fontSize: "9px",
-          background: "#f59e0b",
-          color: "#000",
-          padding: "1px 5px",
-          borderRadius: "3px",
-          fontWeight: 700
-        }}>TEST</span>}
+        {Object.entries(gateways).map(([k, v]) => <div key={k} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border shadow-sm ${v.enabled ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-slate-50 border-slate-200 text-slate-500"}`}>
+            <span className={`w-2 h-2 rounded-full ${v.enabled ? "bg-emerald-500" : "bg-slate-400"}`} />
+            <span className="text-xs font-bold capitalize">{k}</span>
+            {v.testMode && <span className="text-[9px] bg-amber-500 text-white px-1.5 py-0.5 rounded ml-1 font-bold">TEST</span>}
           </div>)}
       </div>
 
@@ -133,7 +108,7 @@ function SAPaymentPage({
       }, {
         id: "events",
         label: "📡 Webhook Events"
-      }].map(t => <button key={t.id} onClick={() => setTab(t.id)} className={"px-4 py-2 rounded-lg text-xs font-semibold transition border " + (tab === t.id ? "bg-blue-600/20 border-blue-500 text-blue-300" : "bg-gray-50 border-gray-300 text-slate-500")}>
+      }].map(t => <button key={t.id} onClick={() => setTab(t.id)} className={"px-4 py-2 rounded-xl text-xs font-bold transition border shadow-sm " + (tab === t.id ? "bg-blue-600 border-blue-600 text-white shadow-blue-500/30" : "bg-white border-gray-200 text-slate-600 hover:bg-gray-50")}>
             {t.label}
           </button>)}
       </div>

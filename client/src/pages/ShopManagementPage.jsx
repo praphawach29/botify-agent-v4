@@ -111,7 +111,10 @@ function ShopManagementPage({
   };
   const pkgLabels = {
     free: "Free",
+    starter: "Starter - ฿590/เดือน",
+    standard: "Standard - ฿990/เดือน",
     pro: "Pro - ฿1,500/เดือน",
+    elite: "Elite - ฿1,590/เดือน",
     business: "Business - ฿3,500/เดือน"
   };
   if (loading) return <Loader />;
@@ -131,13 +134,13 @@ function ShopManagementPage({
                 {s.ai_provider || "claude"} | {pkgLabels[s.package] || "Free"} | {s.phone || "-"}
               </div>
               <div className="flex items-center gap-2 mt-1">
-                <span className={"text-xs px-2 py-0.5 rounded-full " + (s.status === "active" ? "bg-emerald-600/20 text-emerald-300" : "bg-red-600/20 text-red-300")}>
-                  {s.status || "active"}
+                <span className={"text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm " + (s.status === "active" ? "bg-emerald-500 text-white" : "bg-rose-500 text-white")}>
+                  {(s.status || "active").toUpperCase()}
                 </span>
                 {s.expiry_date && <span className="text-gray-400 text-xs">หมดอายุ: {s.expiry_date}</span>}
               </div>
             </div>
-            <button onClick={() => syncShop(s.id)} disabled={syncing === s.id} className="flex items-center gap-1.5 bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 text-xs font-semibold px-3 py-2 rounded-lg transition disabled:opacity-50">
+            <button onClick={() => syncShop(s.id)} disabled={syncing === s.id} className="flex items-center gap-1.5 bg-amber-100 hover:bg-amber-200 text-amber-800 text-xs font-semibold px-3 py-2 rounded-lg transition disabled:opacity-50">
               <Icon d={Icons.refresh} size={14} /> {syncing === s.id ? "กำลัง Sync..." : "Sync Sheet"}
             </button>
           </div>)}
