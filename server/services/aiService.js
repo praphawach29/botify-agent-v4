@@ -216,6 +216,18 @@ const agentTools = [
   {
     type: "function",
     function: {
+      name: "search_knowledge_base",
+      description: "ค้นหาข้อมูลจากระบบ Knowledge Base ของร้าน (เช่น นโยบายร้าน, วิธีการใช้งาน, สเปคสินค้าเชิงลึก) ใช้เมื่อต้องการตอบคำถามเชิงลึกที่ไม่มีข้อมูลในระบบสต็อก",
+      parameters: {
+        type: "object",
+        properties: { query: { type: "string", description: "คำถามหรือข้อความที่ต้องการค้นหา" } },
+        required: ["query"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
       name: "take_order",
       description: "สรุปและสร้างออเดอร์ให้ลูกค้าเมื่อลูกค้าให้ข้อมูลครบถ้วน และตกลงซื้อแล้ว",
       parameters: {
@@ -448,6 +460,27 @@ async function executeTool(name, args, client, userKey, platform, ownerUserId) {
       const url = await findProductImage(sheetId, args.product_name, client.shopId);
       return url ? { success: true, image_url: url } : { success: false, message: "No image found" };
     }
+    
+    if (name === "search_knowledge_base") {
+      try {
+        const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL || "http://localhost:8000";
+        // Call Python Agent Brain for vector search
+        const { data } = await axios.post(`${PYTHON_SERVICE_URL}/api/search`, {
+          query: args.query,
+          shop_id: client.shopId
+        });
+        
+        if (data.status === "success" && data.result && !data.result.startsWith("No knowledge found") && !data.result.startsWith("Error")) {
+          return { success: true, result: data.result };
+        } else {
+          return { success: false, message: "ไม่มีข้อมูลใน Knowledge Base" };
+        }
+      } catch (e) {
+        console.error("search_knowledge_base error:", e.message);
+        return { success: false, message: "ระบบค้นหาความรู้มีปัญหา กรุณาตอบตามความเข้าใจเบื้องต้น" };
+      }
+    }
+
     if (name === "take_order") {
       const orderId = "ORD" + Date.now().toString().slice(-6);
       const od = {
@@ -833,6 +866,26 @@ async function notifySuperAdmin(msg) {
 }
 
 async function callAIAgent(systemPrompt, messages, config = null, client, userKey, platform, ownerUserId) {
+  // --- Botify V5: Smart Routing to Python Microservice ---
+  const isSmartAgent = process.env.AI_PROVIDER === 'smart_agent' || (config && config.type === 'smart_agent');
+  if (isSmartAgent) {
+    try {
+      console.log(`🤖 [Smart Router] Sending message to Python AI Brain for shop: ${client.shopId || "unknown"}`);
+      const pyResponse = await axios.post("http://localhost:8000/ask", {
+        shop_id: client.shopId || "unknown",
+        messages: messages,
+        system_prompt: systemPrompt
+      }, { timeout: 15000 });
+      
+      if (pyResponse.data && pyResponse.data.status === "success") {
+        return pyResponse.data.reply;
+      }
+    } catch (err) {
+      console.error(`⚠️ [Smart Router] Python Microservice failed/unreachable. Falling back to legacy. Error:`, err.message);
+      // Fall through to the legacy fallback chain
+    }
+  }
+
   // ลำดับ Fallback Chain ตามที่ตกลง (ถ้าพังให้สลับไปตัวถัดไป)
   const fallbackChain = AI_FALLBACK_CHAIN;
   let primaryProvider = config?.type || AI_PROVIDER;

@@ -304,3 +304,54 @@ COMMENT ON TABLE shops     IS 'แต่ละร้านค้า / workspace 
 COMMENT ON TABLE users     IS 'Admin users ของแต่ละร้าน + Supabase Auth';
 COMMENT ON TABLE chat_logs IS 'ประวัติแชทแต่ละ message จากทุก Platform';
 COMMENT ON COLUMN shops.plan IS 'trial | starter | pro | agency | byok | suspended';
+
+-- ================================================================
+--  🧠 Knowledge Base (RAG) Schema
+-- ================================================================
+
+-- เปิดใช้งาน Extension pgvector
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- สร้างตาราง Knowledge Base
+CREATE TABLE IF NOT EXISTS shop_knowledge (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL, 
+    title VARCHAR(255) NOT NULL,
+    raw_content TEXT, 
+    file_url TEXT,
+    embedding VECTOR(768), 
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- เปิด RLS
+ALTER TABLE shop_knowledge ENABLE ROW LEVEL SECURITY;
+
+-- ฟังก์ชันค้นหาข้อมูล (Vector Search)
+CREATE OR REPLACE FUNCTION match_shop_knowledge(
+  query_embedding vector(768),
+  match_threshold float,
+  match_count int,
+  p_shop_id uuid
+)
+RETURNS TABLE (
+  id uuid,
+  title varchar(255),
+  raw_content text,
+  file_url text,
+  similarity float
+)
+LANGUAGE sql
+AS $$
+  SELECT
+    id,
+    title,
+    raw_content,
+    file_url,
+    1 - (embedding <=> query_embedding) AS similarity
+  FROM shop_knowledge
+  WHERE shop_id = p_shop_id
+  AND 1 - (embedding <=> query_embedding) > match_threshold
+  ORDER BY embedding <=> query_embedding
+  LIMIT match_count;
+$$;

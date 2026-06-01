@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+google-antigravity
+pydantic
+supabase
+google-genai
+PyPDF2
+requests

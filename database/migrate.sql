@@ -112,6 +112,28 @@ VALUES
 ('Enterprise', 2990, -1, -1, 'แพ็กเกจสูงสุดสำหรับแบรนด์ใหญ่ (Unlimited)', '{"ai": true, "broadcast": true, "analytics": true, "ai_credits": 10000, "slip_check": true, "quotation": true, "custom_prompt": true, "byok": true, "team_management": true, "erp_api": true}'::jsonb, 4);
 
 -- ================================================================
+--  🧠 Knowledge Base (RAG) Schema
+-- ================================================================
+
+-- เปิดใช้งาน Extension pgvector
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- สร้างตาราง Knowledge Base
+CREATE TABLE IF NOT EXISTS shop_knowledge (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    shop_id UUID REFERENCES shops(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL, 
+    title VARCHAR(255) NOT NULL,
+    raw_content TEXT, 
+    file_url TEXT,
+    embedding VECTOR(768), 
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- เปิด RLS
+ALTER TABLE shop_knowledge ENABLE ROW LEVEL SECURITY;
+
+-- ================================================================
 --  ✅ Migration เสร็จสิ้น
 -- ================================================================
 SELECT 'Migration completed successfully' as status;
